@@ -1,6 +1,7 @@
 export default defineNuxtPlugin(async () => {
+  const config = useRuntimeConfig()
   const $api = $fetch.create({
-    baseURL: 'http://localhost',
+    baseURL: `${config.public.appURL}/api`,
     // @ts-expect-error
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -18,7 +19,7 @@ export default defineNuxtPlugin(async () => {
     },
   })
 
-  await $api('/sanctum/csrf-cookie')
+  await $api('/sanctum/csrf-cookie', { baseURL: config.public.appURL })
   // Expose to useNuxtApp().$api
   return {
     provide: {

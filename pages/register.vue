@@ -18,7 +18,7 @@ const form = ref({
 })
 
 async function register(payload: RegisterPayload) {
-  const res = await useAPI('/api/register', { method: 'POST', body: payload })
+  const res = await useAPI('/register', { method: 'POST', body: payload })
   // const res = await axios.post('/api/register', payload)
   console.log(res)
 }
