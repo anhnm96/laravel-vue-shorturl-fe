@@ -19,6 +19,13 @@ const form = ref({
 
 async function register(payload: RegisterPayload) {
   await useAPI('/register', { method: 'POST', body: payload })
+  await useAPI('/login', {
+    method: 'POST', body: {
+      email: payload.email,
+      password: payload.password
+    }
+  })
+  useRouter().push('/me')
 }
 </script>
 <template>

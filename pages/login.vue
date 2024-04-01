@@ -15,6 +15,7 @@ const form = ref({
 
 async function login(payload: LoginPayload) {
   await useAPI('/login', { method: 'POST', body: payload })
+  useRouter().push('/me')
 }
 </script>
 <template>
