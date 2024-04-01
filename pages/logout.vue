@@ -1,7 +1,6 @@
 <script setup lang="ts">
-
-await useAPI('/logout', { method: 'POST' })
-useRouter().replace('/login')
+const { logout } = useAuth()
+logout()
 </script>
 
 <template>

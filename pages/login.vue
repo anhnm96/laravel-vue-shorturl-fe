@@ -3,20 +3,12 @@ definePageMeta({
   layout: "centered",
 });
 
-interface LoginPayload {
-  email: string
-  password: string
-}
+const { login } = useAuth()
 
 const form = ref({
   email: '',
   password: ''
 })
-
-async function login(payload: LoginPayload) {
-  await useAPI('/login', { method: 'POST', body: payload })
-  useRouter().push('/me')
-}
 </script>
 <template>
   <div class="login" @submit.prevent="login(form)">
