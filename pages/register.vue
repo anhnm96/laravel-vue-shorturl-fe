@@ -7,20 +7,18 @@ interface RegisterPayload {
   name: string
   email: string
   password: string
-  password_comfirmation: string
+  password_confirmation: string
 }
 
 const form = ref({
   name: '',
   email: '',
   password: '',
-  password_comfirmation: ''
+  password_confirmation: ''
 })
 
 async function register(payload: RegisterPayload) {
-  const res = await useAPI('/register', { method: 'POST', body: payload })
-  // const res = await axios.post('/api/register', payload)
-  console.log(res)
+  await useAPI('/register', { method: 'POST', body: payload })
 }
 </script>
 <template>
@@ -44,10 +42,10 @@ async function register(payload: RegisterPayload) {
 
       <label>
         <div>Confirm Password</div>
-        <input type="password" v-model="form.password_comfirmation" />
+        <input type="password" v-model="form.password_confirmation" />
       </label>
 
-      <button class="btn">Register</button>
+      <button type="submit" class="btn">Register</button>
     </form>
 
     <p>
