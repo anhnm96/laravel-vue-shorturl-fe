@@ -28,8 +28,9 @@ export const useAuth = () => {
   }
 
   async function login(payload: LoginPayload) {
-    await useAPI('/login', { method: 'POST', body: payload })
+    const res = await useAPI('/login', { method: 'POST', body: payload })
     useRouter().push('/me')
+    return res
   }
 
   async function logout() {
