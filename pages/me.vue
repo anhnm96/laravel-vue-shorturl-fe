@@ -1,8 +1,12 @@
 <script setup lang="ts">
-const { data: user } = await useAPI('/user')
+definePageMeta({
+  middleware: ["auth"],
+})
+
+const { user } = useAuth()
 </script>
 
 <template>
-  <p><strong>User Name:</strong> {{ user.name }}</p>
-  <p><strong>User Email:</strong> {{ user.email }}</p>
+  <p><strong>User Name:</strong> {{ user?.name }}</p>
+  <p><strong>User Email:</strong> {{ user?.email }}</p>
 </template>
