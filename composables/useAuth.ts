@@ -1,12 +1,7 @@
-import type { User } from '@/types'
+import type { LoginPayload, RegisterPayload, User } from '@/types'
 
 const user = ref<User | null>(null);
 export const useAuth = () => {
-  interface LoginPayload {
-    email: string
-    password: string
-  }
-
   async function getUser(): Promise<User | null> {
     if (user.value) return user.value
     try {
@@ -40,13 +35,6 @@ export const useAuth = () => {
   async function logout() {
     await useAPI('/logout', { method: 'POST' })
     useRouter().replace('/login')
-  }
-
-  interface RegisterPayload {
-    name: string
-    email: string
-    password: string
-    password_confirmation: string
   }
 
   async function register(payload: RegisterPayload) {
