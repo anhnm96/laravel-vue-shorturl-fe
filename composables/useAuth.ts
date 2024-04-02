@@ -35,6 +35,7 @@ export const useAuth = () => {
 
   async function logout() {
     await useAPI('/logout', { method: 'POST' })
+    user.value = null
     useRouter().replace('/login')
   }
 
