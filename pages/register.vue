@@ -1,44 +1,37 @@
 <script setup lang="ts">
+import type { RegisterPayload } from '@/types';
+
 definePageMeta({
   layout: "centered",
   middleware: ["guest"],
 });
 
-const form = ref({
-  name: '',
-  email: '',
-  password: '',
-  password_confirmation: ''
-})
-
 const { register } = useAuth()
+
+async function handleRegister(payload: RegisterPayload, node?: any) {
+  const { error } = await register(payload)
+  handleInvalidForm(error, node)
+}
 </script>
 <template>
   <div class="register">
     <h1>Register</h1>
-    <form @submit.prevent="register(form)">
-      <label>
-        <div>Name</div>
-        <input type="text" v-model="form.name" />
-      </label>
-
-      <label>
-        <div>Email</div>
-        <input type="email" v-model="form.email" />
-      </label>
-
-      <label>
-        <div>Password</div>
-        <input type="password" v-model="form.password" />
-      </label>
-
-      <label>
-        <div>Confirm Password</div>
-        <input type="password" v-model="form.password_confirmation" />
-      </label>
-
-      <button type="submit" class="btn">Register</button>
-    </form>
+    <FormKit type="form" @submit="handleRegister">
+      <FormKit type="text" label="Name" name="name"></FormKit>
+      <FormKit type="text" label="Email" name="email"></FormKit>
+      <FormKit
+        type="password"
+        label="Password"
+        name="password"
+        validation="required"
+      ></FormKit>
+      <FormKit
+        type="password"
+        label="Confirm Password"
+        name="password_confirmation"
+        validation="required|confirm:password"
+      ></FormKit>
+    </FormKit>
 
     <p>
       Already have an account?

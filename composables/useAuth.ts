@@ -39,11 +39,14 @@ export const useAuth = () => {
   }
 
   async function register(payload: RegisterPayload) {
-    await useAPI('/register', { method: 'POST', body: payload })
-    await login({
-      email: payload.email,
-      password: payload.password
-    })
+    const res = await useAPI('/register', { method: 'POST', body: payload })
+    if (!res.error.value) {
+      await login({
+        email: payload.email,
+        password: payload.password
+      })
+    }
+    return res
   }
 
   return { login, logout, register, initUser, user }

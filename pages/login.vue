@@ -10,9 +10,7 @@ const { login } = useAuth()
 
 async function handleLogin(payload: LoginPayload, node?: any) {
   const { error } = await login(payload)
-  if (error.value?.statusCode === 422) {
-    node?.setErrors([], error.value.data.errors)
-  }
+  handleInvalidForm(error, node)
 }
 </script>
 <template>
