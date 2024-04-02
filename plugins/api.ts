@@ -11,10 +11,13 @@ export default defineNuxtPlugin(async () => {
       Cookie: useRequestHeader('cookie'),
     },
     credentials: 'include',
-    // @ts-expect-error
-    onResponseError({ response }) {
-      if (response.status === 401) {
-        return navigateTo('/login')
+    onResponseError({ request, response }) {
+      if (
+        [401, 419].includes(response.status) &&
+        !request.toString().endsWith("/api/user")
+      ) {
+        const { logout } = useAuth();
+        logout();
       }
     },
   })

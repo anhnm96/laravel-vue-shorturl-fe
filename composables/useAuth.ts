@@ -1,12 +1,12 @@
 import type { User } from '@/types'
 
+const user = ref<User | null>(null);
 export const useAuth = () => {
   interface LoginPayload {
     email: string
     password: string
   }
 
-  const user = ref<User | null>(null);
   async function getUser(): Promise<User | null> {
     if (user.value) return user.value
     try {
