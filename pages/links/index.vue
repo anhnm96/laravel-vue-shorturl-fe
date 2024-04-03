@@ -6,29 +6,28 @@ definePageMeta({
   middleware: ['auth']
 })
 
-// const queries = ref({
-//   page: 1,
-//   sort: '',
-//   'filter[full_link]': '',
-//   ...useRoute().query,
-// })
+const queries = ref({
+  page: 1,
+  sort: '',
+  'filter[full_link]': '',
+  ...useRoute().query,
+})
 
-// watch(queries, () => useRouter().push({ query: queries.value }), {
-//   deep: true,
-// })
+watch(queries, async () => {
+  await getLinks()
+  useRouter().push({ query: queries.value })
+}, {
+  deep: true,
+})
 
 const data = ref<PaginatedResponse<Link> | null>(null)
-const page = ref(useRoute().query.page || 1)
 await getLinks()
 let links = computed(() => data.value?.data)
 
-watch(page, async () => {
-  getLinks()
-  useRouter().push({ query: { page: page.value } })
-})
-
 async function getLinks() {
-  const { data: res } = await useAPI(`/links?page=${page.value}`)
+  // @ts-expect-error page is number and that's ok
+  const qs = new URLSearchParams(queries.value).toString()
+  const { data: res } = await useAPI(`/links?${qs}`)
   data.value = res.value
 }
 </script>
@@ -37,7 +36,7 @@ async function getLinks() {
     <nav class="flex justify-between mb-4 items-center">
       <h1 class="mb-0">My Links</h1>
       <div class="flex items-center">
-        <SearchInput modelValue="" />
+        <SearchInput v-model="queries['filter[full_link]']" />
         <NuxtLink to="/links/create" class="ml-4">
           <IconPlusCircle class="inline" /> Create New
         </NuxtLink>
@@ -91,7 +90,7 @@ async function getLinks() {
           </tr>
         </tbody>
       </table>
-      <TailwindPagination :data="data" @pagination-change-page="page = $event" />
+      <TailwindPagination :data="data" @pagination-change-page="queries.page = $event" />
       <div class="mt-5 flex justify-center"></div>
     </div>
 
