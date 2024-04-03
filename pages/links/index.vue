@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { TailwindPagination } from 'laravel-vue-pagination'
+import type { Link, PaginatedResponse } from '@/types';
 
 definePageMeta({
   middleware: ['auth']
@@ -16,13 +17,14 @@ definePageMeta({
 //   deep: true,
 // })
 
-const data = ref(null)
-const page = ref(1)
+const data = ref<PaginatedResponse<Link> | null>(null)
+const page = ref(useRoute().query.page || 1)
 await getLinks()
 let links = computed(() => data.value?.data)
 
 watch(page, async () => {
   getLinks()
+  useRouter().push({ query: { page: page.value } })
 })
 
 async function getLinks() {
@@ -89,10 +91,7 @@ async function getLinks() {
           </tr>
         </tbody>
       </table>
-      <TailwindPagination
-        :data="data"
-        @pagination-change-page="page = $event"
-      />
+      <TailwindPagination :data="data" @pagination-change-page="page = $event" />
       <div class="mt-5 flex justify-center"></div>
     </div>
 
