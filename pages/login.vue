@@ -14,7 +14,7 @@ async function handleLogin(payload: LoginPayload, node?: any) {
 }
 </script>
 <template>
-  <div class="login" @submit.prevent="handleLogin">
+  <div class="login">
     <h1>Login</h1>
     <FormKit type="form" submit-label="Login" @submit="handleLogin">
       <FormKit label="Email" name="email" type="email" />

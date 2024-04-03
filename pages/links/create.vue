@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { nanoid } from "nanoid";
+import { nanoid } from 'nanoid'
 
 definePageMeta({
-  middleware: ["auth"],
+  middleware: ['auth'],
 });
 
 async function createLink(payload: { full_link: string }, node?: any) {
   const { error } = await useAPI('/links', {
+    method: 'POST',
     body: { ...payload, short_link: nanoid(8) }
   })
-  useRouter().push("/links");
-  handleInvalidForm(error, node);
+  useRouter().push('/links')
+  handleInvalidForm(error, node)
 }
 </script>
 

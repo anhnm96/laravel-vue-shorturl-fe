@@ -1,24 +1,34 @@
 <script setup lang="ts">
-const links = [
-  {
-    short_link: "234jlsfsf",
-    full_link: "https://vueschool.io",
-    views: 3,
-    id: 1,
-  },
-  {
-    short_link: "adfaowerw",
-    full_link: "https://google.com",
-    views: 1,
-    id: 2,
-  },
-  {
-    short_link: "234sfdjaip",
-    full_link: "https://vuejsnation.com/",
-    views: 0,
-    id: 3,
-  },
-];
+import { TailwindPagination } from 'laravel-vue-pagination'
+
+definePageMeta({
+  middleware: ['auth']
+})
+
+// const queries = ref({
+//   page: 1,
+//   sort: '',
+//   'filter[full_link]': '',
+//   ...useRoute().query,
+// })
+
+// watch(queries, () => useRouter().push({ query: queries.value }), {
+//   deep: true,
+// })
+
+const data = ref(null)
+const page = ref(1)
+await getLinks()
+let links = computed(() => data.value?.data)
+
+watch(page, async () => {
+  getLinks()
+})
+
+async function getLinks() {
+  const { data: res } = await useAPI(`/links?page=${page.value}`)
+  data.value = res.value
+}
 </script>
 <template>
   <div>
@@ -42,7 +52,9 @@ const links = [
             <th class="w-[10%]">Edit</th>
             <th class="w-[10%]">Trash</th>
             <th class="w-[6%] text-center">
-              <button><IconRefresh /></button>
+              <button>
+                <IconRefresh />
+              </button>
             </th>
           </tr>
         </thead>
@@ -50,43 +62,42 @@ const links = [
           <tr v-for="link in links">
             <td>
               <a :href="link.full_link" target="_blank">
-                {{ link.full_link.replace(/^http(s?):\/\//, "") }}</a
-              >
+                {{ link.full_link.replace(/^http(s?):\/\//, "") }}</a>
             </td>
             <td>
-              <a
-                :href="`${useRuntimeConfig().public.appURL}/${link.short_link}`"
-                target="_blank"
-              >
+              <a :href="`${useRuntimeConfig().public.appURL}/${link.short_link}`" target="_blank">
                 {{
-                  useRuntimeConfig().public.appURL.replace(
-                    /^http(s?):\/\//,
-                    ""
-                  )
-                }}/{{ link.short_link }}
+      useRuntimeConfig().public.appURL.replace(
+        /^http(s?):\/\//,
+        ""
+      )
+    }}/{{ link.short_link }}
               </a>
             </td>
             <td>{{ link.views }}</td>
             <td>
-              <NuxtLink class="no-underline" :to="`/links/${link.id}`"
-                ><iconEdit
-              /></NuxtLink>
+              <NuxtLink class="no-underline" :to="`/links/${link.id}`">
+                <iconEdit />
+              </NuxtLink>
             </td>
             <td>
-              <button><IconTrash /></button>
+              <button>
+                <IconTrash />
+              </button>
             </td>
             <td></td>
           </tr>
         </tbody>
       </table>
+      <TailwindPagination
+        :data="data"
+        @pagination-change-page="page = $event"
+      />
       <div class="mt-5 flex justify-center"></div>
     </div>
 
     <!-- No links message for when table is empty -->
-    <div
-      v-else
-      class="border-dashed border-gray-500 p-3 border-[1px] text-center"
-    >
+    <div v-else class="border-dashed border-gray-500 p-3 border-[1px] text-center">
       <div class="flex justify-center">
         <IconLink />
       </div>
@@ -97,9 +108,7 @@ const links = [
         <!-- Show this if reason for no links is User has none -->
         <span v-else>
           No links created yet
-          <NuxtLink to="/links/create" class="text-green-600"
-            >Go create your first link!</NuxtLink
-          >
+          <NuxtLink to="/links/create" class="text-green-600">Go create your first link!</NuxtLink>
         </span>
       </p>
     </div>
