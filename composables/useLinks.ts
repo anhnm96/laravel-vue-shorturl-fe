@@ -50,7 +50,8 @@ export const useLinks = ({ queries = ref({}) }: UseLinksOptions = {}) => {
 
   // update an existing link
   async function update(id: string | number, payload: Partial<Link>) {
-    const { data } = await useAPI<RawLink>(`/${slug}/${id}`, { method: 'PUT', body: payload })
+    const { data, error } = await useAPI<RawLink>(`/${slug}/${id}`, { method: 'PUT', body: payload })
+    if (error.value) throw createError({ data: error })
     if (!data.value) return
     return (item.value = adapter(data.value))
   }
