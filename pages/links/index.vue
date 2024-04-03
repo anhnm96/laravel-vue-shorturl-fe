@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { TailwindPagination } from 'laravel-vue-pagination'
-import type { Link, PaginatedResponse } from '@/types';
 
 definePageMeta({
   middleware: ['auth']
@@ -13,23 +12,15 @@ const queries = ref({
   ...useRoute().query,
 })
 
-watch(queries, async () => {
-  await getLinks()
+const { data, index: getLinks } = useLinks({ queries });
+await getLinks()
+let links = computed(() => data.value?.data)
+
+watch(queries, () => {
   useRouter().push({ query: queries.value })
 }, {
   deep: true,
 })
-
-const data = ref<PaginatedResponse<Link> | null>(null)
-await getLinks()
-let links = computed(() => data.value?.data)
-
-async function getLinks() {
-  // @ts-expect-error page is number and that's ok
-  const qs = new URLSearchParams(queries.value).toString()
-  const { data: res } = await useAPI(`/links?${qs}`)
-  data.value = res.value
-}
 </script>
 <template>
   <div>
@@ -53,7 +44,7 @@ async function getLinks() {
             <th class="w-[10%]">Edit</th>
             <th class="w-[10%]">Trash</th>
             <th class="w-[6%] text-center">
-              <button @click="getLinks">
+              <button @click="getLinks()">
                 <IconRefresh />
               </button>
             </th>
@@ -61,18 +52,18 @@ async function getLinks() {
         </thead>
         <tbody>
           <tr v-for="link in links">
-            <td>
+            <td :title="`created ${useTimeAgo(link.created_at).value}`">
               <a :href="link.full_link" target="_blank">
                 {{ link.full_link.replace(/^http(s?):\/\//, "") }}</a>
             </td>
             <td>
               <a :href="`${useRuntimeConfig().public.appURL}/${link.short_link}`" target="_blank">
                 {{
-      useRuntimeConfig().public.appURL.replace(
-        /^http(s?):\/\//,
-        ""
-      )
-    }}/{{ link.short_link }}
+          useRuntimeConfig().public.appURL.replace(
+            /^http(s?):\/\//,
+            ""
+          )
+        }}/{{ link.short_link }}
               </a>
             </td>
             <td>{{ link.views }}</td>
