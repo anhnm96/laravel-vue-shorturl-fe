@@ -12,7 +12,7 @@ const queries = ref({
   ...useRoute().query,
 })
 
-const { data, index: getLinks } = useLinks({ queries });
+const { data, index: getLinks, destroy } = useLinks({ queries });
 await getLinks()
 let links = computed(() => data.value?.data)
 
@@ -21,6 +21,13 @@ watch(queries, () => {
 }, {
   deep: true,
 })
+
+async function handleDelete(id: number) {
+  await destroy(id);
+  if (data.value) {
+    data.value.data = data.value?.data.filter((link) => link.id !== id);
+  }
+}
 </script>
 <template>
   <div>
@@ -73,7 +80,7 @@ watch(queries, () => {
               </NuxtLink>
             </td>
             <td>
-              <button>
+              <button @click="handleDelete(link.id)">
                 <IconTrash />
               </button>
             </td>
